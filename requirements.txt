@@ -1,0 +1,16 @@
+﻿# 核心数据处理与指标计算
+pandas>=2.0.0
+numpy>=1.24.0
+
+# 网络请求与环境变量
+requests>=2.31.0
+python-dotenv>=1.0.0
+
+# 报表导出与打印支持
+openpyxl>=3.1.2
+tabulate>=0.9.0
+
+matplotlib
+openai
+anthropic
+Flask>=3.0.0

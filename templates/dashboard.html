@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AlphaBot Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+</head>
+<body>
+  <main class="page-shell">
+    <header class="hero-card page-header">
+      <div>
+        <p class="eyebrow">LOCAL MONITOR</p>
+        <h1>AlphaBot Dashboard</h1>
+        <p class="hero-subtitle">本地只读监控面板，聚合账户、币种、持仓与 AI 决策状态。</p>
+      </div>
+      <div class="hero-meta">
+        <div class="meta-pill">Local Only</div>
+        <div id="last-refresh" class="meta-pill">最近刷新: --</div>
+      </div>
+    </header>
+
+    <section id="overview-cards" class="overview-grid"></section>
+
+    <section class="content-grid two-up">
+      <section class="panel core-panel">
+        <div class="panel-header compact">
+          <div>
+            <p class="section-kicker">BTC LAYERED RR</p>
+            <h2>BTC近端 / 扩展RR</h2>
+          </div>
+          <div class="meta-pill">近端控风险，扩展控机会</div>
+        </div>
+        <div id="btc-rr-panel" class="summary-grid"></div>
+      </section>
+
+      <section class="panel side-panel support-panel">
+        <div class="panel-header compact">
+          <div>
+            <p class="section-kicker">POSITION AI RISK</p>
+            <h2>持仓后AI风险</h2>
+          </div>
+          <div class="meta-pill">只读，不自动执行</div>
+        </div>
+        <div id="position-ai-summary-panel" class="summary-grid"></div>
+      </section>
+    </section>
+
+    <section class="panel support-panel">
+      <div class="panel-header compact">
+        <div>
+          <p class="section-kicker">POSITION AI</p>
+          <h2>持仓后AI监控</h2>
+        </div>
+        <div class="meta-pill">最新每仓状态</div>
+      </div>
+      <div class="table-wrap">
+        <table id="position-ai-table" class="data-table">
+          <thead>
+            <tr>
+              <th>时间</th>
+              <th>账户</th>
+              <th>交易对</th>
+              <th>方向</th>
+              <th>浮盈%</th>
+              <th>持仓分钟</th>
+              <th>AI建议</th>
+              <th>AI置信度</th>
+              <th>风险等级</th>
+              <th>系统状态</th>
+              <th>是否执行</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel support-panel">
+      <div class="panel-header compact">
+        <div>
+          <p class="section-kicker">BTC RR RECENT</p>
+          <h2>BTC RR最近记录</h2>
+        </div>
+        <div class="meta-pill">最近5条BTC入场评估</div>
+      </div>
+      <div class="table-wrap">
+        <table id="btc-rr-table" class="data-table">
+          <thead>
+            <tr>
+              <th>时间</th>
+              <th>AI判定</th>
+              <th>AI置信度</th>
+              <th>净RR</th>
+              <th>近端净RR</th>
+              <th>扩展净RR</th>
+              <th>RR模式</th>
+              <th>仓位上限</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel table-panel">
+      <div class="panel-header">
+        <div>
+          <p class="section-kicker">MARKETS</p>
+          <h2>币种监控</h2>
+        </div>
+        <div class="toolbar">
+          <input id="symbol-search" type="search" placeholder="搜索币种">
+          <label class="toggle-chip"><input id="positions-only" type="checkbox"> 仅看持仓</label>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table id="symbol-table">
+          <thead>
+            <tr>
+              <th data-sort="symbol">Symbol</th>
+              <th data-sort="latest_price">Price</th>
+              <th data-sort="trend_state">Trend</th>
+              <th data-sort="long_score">Long</th>
+              <th data-sort="short_score">Short</th>
+              <th data-sort="realistic_rr">RR</th>
+              <th>Funding</th>
+              <th>Position</th>
+              <th data-sort="last_update_time">Updated</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="content-grid two-up">
+      <section class="panel core-panel">
+        <div class="panel-header compact">
+          <div>
+            <p class="section-kicker">POSITIONS</p>
+            <h2>当前持仓</h2>
+          </div>
+        </div>
+        <div id="positions-panel" class="positions-grid"></div>
+      </section>
+
+      <section class="panel side-panel support-panel">
+        <div class="panel-header compact">
+          <div>
+            <p class="section-kicker">ACCOUNTS</p>
+            <h2>账户统计</h2>
+          </div>
+        </div>
+        <div id="account-stats-panel" class="account-grid"></div>
+      </section>
+    </section>
+
+    <section class="content-grid two-up">
+      <section class="panel core-panel">
+        <div class="panel-header compact">
+          <div>
+            <p class="section-kicker">STRATEGY BUCKETS</p>
+            <h2>策略桶汇总</h2>
+          </div>
+          <div class="meta-pill">最近日志聚合</div>
+        </div>
+        <div id="bucket-summary-panel" class="bucket-summary-grid"></div>
+      </section>
+
+      <section class="panel side-panel support-panel">
+        <div class="panel-header compact">
+          <div>
+            <p class="section-kicker">MARKET REGIMES</p>
+            <h2>市场状态汇总</h2>
+          </div>
+        </div>
+        <div id="regime-summary-panel" class="bucket-summary-grid"></div>
+      </section>
+    </section>
+
+    <section class="content-grid two-up">
+      <section class="panel core-panel">
+        <div class="panel-header compact">
+          <div>
+            <p class="section-kicker">REGIME × BUCKET</p>
+            <h2>状态×策略组合</h2>
+          </div>
+        </div>
+        <div id="regime-bucket-panel" class="matrix-grid"></div>
+      </section>
+
+      <section class="panel side-panel support-panel">
+        <div class="panel-header compact">
+          <div>
+            <p class="section-kicker">EXECUTION QUALITY</p>
+            <h2>执行质量汇总</h2>
+          </div>
+          <div class="meta-pill">预估 vs 实际成本</div>
+        </div>
+        <div id="execution-quality-summary-panel" class="bucket-summary-grid"></div>
+      </section>
+    </section>
+
+    <section class="content-grid two-up">
+      <section class="panel core-panel">
+        <div class="panel-header compact">
+          <div>
+            <p class="section-kicker">EXECUTION QUALITY BY BUCKET</p>
+            <h2>执行质量 × 策略桶</h2>
+          </div>
+          <div class="meta-pill">按策略桶拆分</div>
+        </div>
+        <div id="execution-quality-bucket-panel" class="summary-grid"></div>
+      </section>
+
+      <section class="panel side-panel support-panel">
+        <div class="panel-header compact">
+          <div>
+            <p class="section-kicker">EXECUTION QUALITY BY REGIME</p>
+            <h2>执行质量 × 市场状态</h2>
+          </div>
+          <div class="meta-pill">按市场状态拆分</div>
+        </div>
+        <div id="execution-quality-regime-panel" class="summary-grid"></div>
+      </section>
+    </section>
+
+    <section class="content-grid two-up">
+      <section class="panel core-panel">
+        <div class="panel-header compact">
+          <div>
+            <p class="section-kicker">REVIEW ANALYTICS</p>
+            <h2>回测 / 复盘参数建议</h2>
+          </div>
+          <div class="meta-pill">只读建议层</div>
+        </div>
+        <div id="backtest-parameter-panel" class="summary-grid"></div>
+      </section>
+
+      <section class="panel side-panel support-panel">
+        <div class="panel-header compact">
+          <div>
+            <p class="section-kicker">AI × SHADOW</p>
+            <h2>AI质量×Shadow</h2>
+          </div>
+          <div class="meta-pill">置信度分段复盘</div>
+        </div>
+        <div id="ai-shadow-quality-panel" class="summary-grid"></div>
+      </section>
+    </section>
+
+    <section class="panel support-panel">
+      <div class="panel-header compact">
+        <div>
+          <p class="section-kicker">AI × SHADOW RECOMMENDATIONS</p>
+          <h2>AI质量×Shadow建议</h2>
+        </div>
+      </div>
+      <div id="ai-shadow-recommendation-panel" class="summary-grid"></div>
+    </section>
+
+    <section class="panel support-panel">
+      <div class="panel-header compact">
+        <div>
+          <p class="section-kicker">CALIBRATION</p>
+          <h2>参数校准建议</h2>
+        </div>
+      </div>
+      <div id="calibration-panel" class="summary-grid"></div>
+    </section>
+
+    <section class="panel support-panel">
+      <div class="panel-header compact">
+        <div>
+          <p class="section-kicker">OPEN REJECTIONS</p>
+          <h2>未开仓原因摘要</h2>
+        </div>
+        <div class="meta-pill">近 24 小时 Top 原因</div>
+      </div>
+      <div id="open-rejection-panel" class="summary-grid"></div>
+    </section>
+
+    <section class="panel support-panel">
+      <div class="panel-header compact">
+        <div>
+          <p class="section-kicker">OPEN REJECTION STAGES</p>
+          <h2>未开仓阶段摘要</h2>
+        </div>
+        <div class="meta-pill">近 24 小时 Top 阶段</div>
+      </div>
+      <div id="open-rejection-stage-panel" class="summary-grid"></div>
+    </section>
+
+    <section class="panel support-panel">
+      <div class="panel-header compact">
+        <div>
+          <p class="section-kicker">AI SNAPSHOT</p>
+          <h2>各币最新 AI 审核结果</h2>
+        </div>
+        <div class="meta-pill">每币仅显示最新 1 条</div>
+      </div>
+      <div id="latest-ai-summary" class="summary-grid"></div>
+    </section>
+
+    <section class="panel support-panel">
+      <div class="panel-header compact">
+        <div>
+          <p class="section-kicker">LATEST EVENTS</p>
+          <h2>AI / Signal Events</h2>
+        </div>
+        <div class="meta-pill">BTC / ETH / XRP / SOL 各显示最近 5 条</div>
+      </div>
+      <div id="events-feed" class="events-groups-grid"></div>
+    </section>
+  </main>
+  <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+</body>
+</html>

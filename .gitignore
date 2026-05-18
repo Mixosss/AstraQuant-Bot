@@ -1,0 +1,57 @@
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+test_*.py
+
+# Personal test scripts, private notes, and internal docs
+开单测试.py
+手动强跑.txt
+提示词.txt
+平仓逻辑.md
+开单逻辑.md
+成熟收益型系统说明.md
+止盈止损.md
+风控逻辑.md
+消息通知.py
+docs/
+
+# IDE / local tooling
+.idea/
+.vscode/
+.claude/
+.clineignore
+.clinerules
+
+# Runtime state, cached market data, and trading data
+*.log
+*.db
+*.sqlite
+*.pkl
+Cache_MarketData/
+Cache_MarketData_LiveStrategy/
+ai_decision_logs.csv
+position_ai_decision_logs.csv
+trades_history*.csv
+balance_snapshots*.csv
+active_trades*.json
+runtime_state.json
+backtest_runtime_state*.json
+
+# Backtest outputs
+backtest_1000u_live_strategy_after_fix/
+
+# OS files
+.DS_Store
+Thumbs.db
